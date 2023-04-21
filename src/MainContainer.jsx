@@ -1,8 +1,10 @@
 import { useHelper } from '@react-three/drei'
 import AnimatedStars from './AnimatedStars'
 import { useRef } from 'react'
-import Earth from './Earth'
+
 import * as THREE from 'three'
+
+import Earth from './scenes/earth/Earth'
 
 const MainContainer = () => {
   const directionalLightRef = useRef()
