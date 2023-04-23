@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import * as THREE from 'three'
 
 import Earth from './scenes/earth/Earth'
+import Sun from './scenes/sun/Sun'
 
 const MainContainer = () => {
   const directionalLightRef = useRef()
@@ -15,7 +16,7 @@ const MainContainer = () => {
     <>
       <color attach='background' args={['black']} />
       <AnimatedStars />
-      <directionalLight
+      {/* <directionalLight
         castShadow
         ref={directionalLightRef}
         position={[0, 0, 10]}
@@ -26,9 +27,10 @@ const MainContainer = () => {
         castShadow
         ref={directionalLightRefTwo}
         position={[0, 0, -10]}
-      />
+      /> */}
       {/* <ambientLight /> */}
 
+      <Sun />
       <Earth displacementScale={0.15} />
     </>
   )
