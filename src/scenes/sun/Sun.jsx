@@ -1,8 +1,8 @@
 import { useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 
-const Sun = () => {
+const Sun = React.memo(() => {
   const sunRef = useRef()
 
   const [sunTexture] = useTexture(['/assets/sun_map.jpg'])
@@ -25,6 +25,6 @@ const Sun = () => {
       <pointLight castShadow />
     </mesh>
   )
-}
+})
 
 export default Sun

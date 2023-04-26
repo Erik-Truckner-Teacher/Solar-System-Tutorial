@@ -1,6 +1,7 @@
 import { useHelper } from '@react-three/drei'
 import AnimatedStars from './AnimatedStars'
 import { useRef } from 'react'
+import { Perf } from 'r3f-perf'
 
 import * as THREE from 'three'
 
@@ -14,7 +15,7 @@ const MainContainer = () => {
   useHelper(directionalLightRefTwo, THREE.DirectionalLightHelper, 1, 'hotpink')
   return (
     <>
-      <color attach='background' args={['black']} />
+      <Perf />
       <AnimatedStars />
       {/* <directionalLight
         castShadow
