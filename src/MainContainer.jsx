@@ -5,6 +5,8 @@ import { Perf } from 'r3f-perf'
 
 import * as THREE from 'three'
 
+import CameraPositionLogging from './helpers/CameraPositionLogging'
+
 import Earth from './scenes/earth/Earth'
 import Sun from './scenes/sun/Sun'
 
@@ -16,6 +18,7 @@ const MainContainer = () => {
   return (
     <>
       <Perf />
+      <CameraPositionLogging event='mousedown' />
       <AnimatedStars />
       {/* <directionalLight
         castShadow
