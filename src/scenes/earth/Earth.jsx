@@ -59,6 +59,11 @@ const Earth = React.memo(({ displacementScale }) => {
     if (followingEarth) {
       camera.lookAt(earthPositionRef)
       camera.position.copy(cameraTargetPosition)
+    } else {
+      const originalCameraPosition = new THREE.Vector3(16.14, 8.32, 19.81)
+      const originalCameraTarget = new THREE.Vector3(0, 0, 0)
+      camera.lookAt(originalCameraTarget)
+      camera.position.copy(originalCameraPosition)
     }
   })
 
