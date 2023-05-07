@@ -1,5 +1,5 @@
 import { useTexture } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import React, { useRef, useCallback, useEffect, useState } from 'react'
 import Moon from './Moon'
 import ISS from './ISS'
@@ -12,6 +12,7 @@ const Earth = React.memo(({ displacementScale }) => {
   const clockRef = useRef(new THREE.Clock()) // Create a reference to the clock
 
   const [hovered, hover] = useState(false)
+  const [followingEarth, setFollowingEarth] = useState(false)
 
   const [
     earthTexture,
@@ -30,20 +31,35 @@ const Earth = React.memo(({ displacementScale }) => {
   const updateEarthPosition = useCallback(() => {
     // Calculate the Earth's position based on its angle from the Sun
     const angle = clockRef.current.getElapsedTime() * 0.5
-    const distance = 8
+    const distance = 10
     const x = Math.sin(angle) * distance
     const z = Math.cos(angle) * distance
     earthRef.current.position.set(x, 0, z)
     earthRef.current.rotation.y += 0.002
-    earthPositionRef.current = earthRef.current.position
   }, [])
+
+  const toggleFollowingEarth = () => {
+    setFollowingEarth((prevFollowingEarth) => !prevFollowingEarth)
+  }
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
   }, [hovered])
 
-  useFrame(() => {
+  useFrame(({ camera }) => {
     updateEarthPosition()
+
+    const earthPositionRef = earthRef.current.position
+    const cameraTargetPosition = new THREE.Vector3(
+      earthPositionRef.x + 10,
+      earthPositionRef.y + 2,
+      earthPositionRef.z + 5
+    )
+
+    if (followingEarth) {
+      camera.lookAt(earthPositionRef)
+      camera.position.copy(cameraTargetPosition)
+    }
   })
 
   return (
@@ -51,6 +67,7 @@ const Earth = React.memo(({ displacementScale }) => {
       <mesh
         castShadow
         receiveShadow
+        onClick={toggleFollowingEarth}
         onPointerOver={() => hover(true)}
         onPointerOut={() => hover(false)}>
         {/* Radius , X-axis , Y-axis */}
