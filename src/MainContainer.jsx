@@ -32,7 +32,7 @@ const MainContainer = () => {
         ref={directionalLightRefTwo}
         position={[0, 0, -10]}
       /> */}
-      {/* <ambientLight /> */}
+      <ambientLight intensity={0.1} />
 
       <Sun />
       <Earth displacementScale={0.15} />

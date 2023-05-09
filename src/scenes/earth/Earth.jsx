@@ -5,14 +5,23 @@ import Moon from './Moon'
 import ISS from './ISS'
 
 import * as THREE from 'three'
+import * as TWEEN from '@tweenjs/tween.js'
 
 const Earth = React.memo(({ displacementScale }) => {
   const earthRef = useRef()
-  const earthPositionRef = useRef(new THREE.Vector3(8, 0, 0)) // Create a reference to the Earth's position vector
+
   const clockRef = useRef(new THREE.Clock()) // Create a reference to the clock
+
+  const { camera } = useThree()
 
   const [hovered, hover] = useState(false)
   const [followingEarth, setFollowingEarth] = useState(false)
+
+  const [cameraPosition, setCameraPosition] = useState(
+    new THREE.Vector3(16.14, 8.32, 19.81)
+  )
+
+  const [cameraTarget, setCameraTarget] = useState(new THREE.Vector3(0, 0, 0))
 
   const [
     earthTexture,
@@ -31,7 +40,7 @@ const Earth = React.memo(({ displacementScale }) => {
   const updateEarthPosition = useCallback(() => {
     // Calculate the Earth's position based on its angle from the Sun
     const angle = clockRef.current.getElapsedTime() * 0.5
-    const distance = 10
+    const distance = 14
     const x = Math.sin(angle) * distance
     const z = Math.cos(angle) * distance
     earthRef.current.position.set(x, 0, z)
@@ -46,25 +55,58 @@ const Earth = React.memo(({ displacementScale }) => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
   }, [hovered])
 
-  useFrame(({ camera }) => {
+  useFrame(() => {
     updateEarthPosition()
+    TWEEN.update()
 
     const earthPositionRef = earthRef.current.position
-    const cameraTargetPosition = new THREE.Vector3(
-      earthPositionRef.x + 10,
-      earthPositionRef.y + 2,
-      earthPositionRef.z + 5
-    )
 
     if (followingEarth) {
-      camera.lookAt(earthPositionRef)
-      camera.position.copy(cameraTargetPosition)
+      const cameraTargetPosition = new THREE.Vector3(
+        earthPositionRef.x + 10,
+        earthPositionRef.y + 2,
+        earthPositionRef.z + 5
+      )
+      //Tween for camera position
+      new TWEEN.Tween(cameraPosition)
+        .to(cameraTargetPosition, 1000)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+          setCameraPosition(cameraPosition)
+        })
+        .start()
+
+      //Tween for camera targeting
+      new TWEEN.Tween(cameraTarget)
+        .to(earthPositionRef, 1000)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+          setCameraTarget(cameraTarget)
+        })
+        .start()
     } else {
       const originalCameraPosition = new THREE.Vector3(16.14, 8.32, 19.81)
       const originalCameraTarget = new THREE.Vector3(0, 0, 0)
-      camera.lookAt(originalCameraTarget)
-      camera.position.copy(originalCameraPosition)
+      //Tween to original position
+      new TWEEN.Tween(cameraPosition)
+        .to(originalCameraPosition, 1000)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+          setCameraPosition(cameraPosition)
+        })
+        .start()
+      //Tween to original target
+      new TWEEN.Tween(cameraTarget)
+        .to(originalCameraTarget, 1000)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+          setCameraTarget(cameraTarget)
+        })
+        .start()
     }
+    camera.lookAt(cameraTarget)
+    camera.position.copy(cameraPosition)
+    camera.updateProjectionMatrix()
   })
 
   return (
