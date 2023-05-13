@@ -55,8 +55,7 @@ const Earth = React.memo(({ displacementScale }) => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
   }, [hovered])
 
-  useFrame(() => {
-    updateEarthPosition()
+  const tweenLogic = useCallback(() => {
     TWEEN.update()
 
     const earthPositionRef = earthRef.current.position
@@ -107,6 +106,11 @@ const Earth = React.memo(({ displacementScale }) => {
     camera.lookAt(cameraTarget)
     camera.position.copy(cameraPosition)
     camera.updateProjectionMatrix()
+  })
+
+  useFrame(() => {
+    updateEarthPosition()
+    tweenLogic()
   })
 
   return (
